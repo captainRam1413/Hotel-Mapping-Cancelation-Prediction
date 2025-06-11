@@ -8,8 +8,8 @@ import joblib
 import plotly 
 import plotly.graph_objs as go
 
-
-hotel2 = pd.read_csv(r'D:\HotelMappingCancelationPrediction\Flask\data\hotel_final.csv')
+# Use relative path from your current workspace
+hotel2 = pd.read_csv('data/hotel_final.csv')
 
 
 app = Flask(__name__)
@@ -82,7 +82,8 @@ def index():
 
 @app.route('/preview')
 def preview():
-    df = pd.read_csv(r'D:\HotelMappingCancelationPrediction\Flask\data\hotel_final.csv')
+    # Use relative path here too
+    df = pd.read_csv('data/hotel_final.csv')
     return render_template('preview.html', df_view = df.head(100))
 
 @app.route('/analyze', methods = ['POST'])
@@ -130,27 +131,21 @@ def analyze ():
 
     df_predict = pd.DataFrame(data = data, index = [1])
 
-    model = joblib.load(r'D:\HotelMappingCancelationPrediction\hotel_tuned')
+    # Update the model path to use relative path
+    model = joblib.load('hotel_tuned')
     prediction = model.predict_proba(df_predict)
     prediction_fix = model.predict(df_predict)
     round_prediction = round(100 * prediction[0][1],2)
     round_prediction_confirmed = round(100 * prediction[0][0],2)
     print(f'The Chances of cancellation is {round(100 * prediction[0][1],2)}%')
     print(f'This Booking Will Be : {prediction_fix[0]}')
-
+    
     final_prediction = ""
 
     if prediction_fix[0] == 0:
         final_prediction = "Confirmed"
-    
     else :
         final_prediction = "Cancelled"
-
-
-
-
-
-
     return render_template('index.html', hotel = hotel,
             location = location,
             lead_time = lead_time,
